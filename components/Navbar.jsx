@@ -7,16 +7,16 @@ import { useSession, signOut } from "@/lib/auth-client";
 export default function Navbar() {
   const { data: session, isPending } = useSession();
   const pathname = usePathname();
-  const [theme, setTheme] = useState("retro");
+  const [theme, setTheme] = useState("booknook");
 
   useEffect(() => {
-    const t = localStorage.getItem("theme") || "retro";
+    const t = localStorage.getItem("theme") || "booknook";
     setTheme(t);
     document.documentElement.setAttribute("data-theme", t);
   }, []);
 
   const toggleTheme = () => {
-    const t = theme === "retro" ? "dim" : "retro";
+    const t = theme === "booknook" ? "booknook-dark" : "booknook";
     setTheme(t);
     localStorage.setItem("theme", t);
     document.documentElement.setAttribute("data-theme", t);
@@ -69,7 +69,7 @@ export default function Navbar() {
       </div>
       <div className="navbar-end gap-2">
         <button onClick={toggleTheme} className="btn btn-ghost btn-circle" aria-label="Toggle theme">
-          {theme === "retro" ? "🌙" : "☀️"}
+          {theme === "booknook" ? "🌙" : "☀️"}
         </button>
         {isPending ? null : session ? (
           <div className="dropdown dropdown-end">
