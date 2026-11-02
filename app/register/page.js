@@ -33,7 +33,6 @@ export default function Register() {
       name: f.get("name"),
       email: f.get("email"),
       password: f.get("password"),
-      image: f.get("photo"),
     });
     setBusy(false);
     if (err) {
@@ -52,7 +51,6 @@ export default function Register() {
         {error && <p className="text-sm text-error">{error}</p>}
         <input name="name" required placeholder="Name" className="input input-bordered w-full" />
         <input name="email" type="email" required placeholder="Email" className="input input-bordered w-full" />
-        <input name="photo" type="url" required placeholder="Photo URL" className="input input-bordered w-full" />
         <input name="password" type="password" required placeholder="Password" className="input input-bordered w-full" />
         <button className="btn btn-primary" disabled={busy}>
           {busy ? "Registering..." : "Register"}
