@@ -25,7 +25,7 @@ export default function Footer() {
           <p className="mb-2 font-semibold">Follow us</p>
           <div className="flex items-center gap-4">
             <Link
-              href="https://www.linkedin.com/in/minhazifys"
+              href="https://www.linkedin.com/in/minhazify"
               target="_blank"
               aria-label="LinkedIn"
               className="hover:text-primary"
