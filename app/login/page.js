@@ -31,6 +31,11 @@ export default function Login() {
     window.location.assign(dest());
   }
 
+  async function googleLogin() {
+    const { error: err } = await signIn.social({ provider: "google", callbackURL: dest() });
+    if (err) toast.error(`Google: ${err.message || err.statusText || err.status || "sign-in failed"}`);
+  }
+
   return (
     <div className="mx-auto max-w-md px-4 py-12">
       <form onSubmit={onSubmit} className="card space-y-4 border border-base-300 bg-base-100 p-8 shadow-md">
@@ -45,7 +50,7 @@ export default function Login() {
           {busy ? "Logging in..." : "Login"}
         </button>
         <div className="divider">OR</div>
-        <button type="button" className="btn btn-outline" onClick={() => signIn.social({ provider: "google", callbackURL: dest() })}>
+        <button type="button" className="btn btn-outline" onClick={googleLogin}>
           Continue with Google
         </button>
         <p className="text-center text-sm">
