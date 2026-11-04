@@ -2,20 +2,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
 import { api } from "@/lib/api";
 import useTitle from "@/lib/useTitle";
 import BookCard from "@/components/BookCard";
+import HeroSlider from "@/components/HeroSlider";
 import Spinner from "@/components/Spinner";
-
-const slides = [
-  { title: "Add a book. Borrow a book. Return a book.", text: "Your neighbourhood library, now online and always open.", cls: "bg-primary bg-linear-to-r from-primary to-secondary" },
-  { title: "Share what you love reading", text: "List your own books so other readers can borrow them.", cls: "bg-secondary bg-linear-to-r from-secondary to-accent" },
-  { title: "Borrow for a few days", text: "Pick a return date, enjoy the story and bring it back.", cls: "bg-accent bg-linear-to-r from-accent to-primary" },
-];
 
 const steps = [
   { n: "1", t: "Create an account", d: "Register with email or Google in under a minute." },
@@ -46,19 +37,7 @@ export default function Home() {
 
   return (
     <div>
-      <Swiper modules={[Autoplay, Pagination]} autoplay={{ delay: 4000 }} pagination={{ clickable: true }} loop>
-        {slides.map((s) => (
-          <SwiperSlide key={s.title}>
-            <div className={`${s.cls} flex h-[420px] flex-col items-center justify-center px-6 text-center text-primary-content`}>
-              <h1 className="max-w-3xl text-3xl font-bold md:text-5xl">{s.title}</h1>
-              <p className="mt-4 max-w-xl text-lg">{s.text}</p>
-              <Link href="/books" className="btn btn-neutral mt-6">
-                Browse Books
-              </Link>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <HeroSlider />
 
       <section className="mx-auto max-w-7xl px-4 py-14">
         <h2 className="mb-8 text-center text-3xl font-bold">New Arrivals</h2>
