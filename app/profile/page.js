@@ -1,81 +1,92 @@
 "use client";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { authClient, useSession } from "@/lib/auth-client";
-import { uploadImage } from "@/lib/imgbb";
+import { api } from "@/lib/api";
 import useTitle from "@/lib/useTitle";
-import PrivateRoute from "@/components/PrivateRoute";
+import BookCard from "@/components/BookCard";
+import Spinner from "@/components/Spinner";
+import HeroSlider from "@/components/HeroSlider";
 
-function Profile() {
-  useTitle("My Profile");
-  const { data: session } = useSession();
-  const u = session.user;
-  const [name, setName] = useState(u.name || "");
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState("");
-  const [busy, setBusy] = useState(false);
+const steps = [
+  { n: "1", t: "Create an account", d: "Register with email or Google in under a minute." },
+  { n: "2", t: "Find your book", d: "Browse every title and open the details page." },
+  { n: "3", t: "Borrow and return", d: "Confirm the borrow, read, then return it from My Borrows." },
+];
 
-  const avatar =
-    preview || u.image || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(u.name)}`;
+const categories = [
+  { n: "Fiction", i: "🧙" },
+  { n: "Science", i: "🔬" },
+  { n: "History", i: "🏛️" },
+  { n: "Kids", i: "🧸" },
+  { n: "Others", i: "📖" },
+];
 
-  function onFile(e) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
-  }
+export default function Home() {
+  useTitle("Home");
+  const [books, setBooks] = useState(null);
 
-  async function onSubmit(e) {
-    e.preventDefault();
-    if (!name.trim()) return toast.error("Name cannot be empty");
-    setBusy(true);
-    try {
-      const data = { name: name.trim() };
-      if (file) data.image = await uploadImage(file);
-      const { error } = await authClient.updateUser(data);
-      if (error) throw new Error(error.message || "Could not update profile");
-      toast.success("Profile updated successfully!");
-      setFile(null);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setBusy(false);
-    }
-  }
+  useEffect(() => {
+    api("/books?limit=6")
+      .then(setBooks)
+      .catch((e) => {
+        toast.error(e.message);
+        setBooks([]);
+      });
+  }, []);
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12">
-      <form onSubmit={onSubmit} className="card items-center space-y-4 border border-base-300 bg-base-100 p-8 shadow-md">
-        <h1 className="text-2xl font-bold">My Profile</h1>
-        <div className="avatar">
-          <div className="w-28 rounded-full">
-            <img src={avatar} alt={u.name} />
+    <div>
+      <HeroSlider />
+
+      <section className="mx-auto max-w-7xl px-4 py-14">
+        <h2 className="mb-8 text-center text-3xl font-bold">New Arrivals</h2>
+        {books === null ? (
+          <Spinner full={false} />
+        ) : books.length === 0 ? (
+          <p className="text-center opacity-70">No books yet. Be the first to add one!</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {books.map((b) => (
+              <BookCard key={b._id} book={b} />
+            ))}
+          </div>
+        )}
+        <div className="mt-8 text-center">
+          <Link href="/books" className="btn btn-primary">
+            See All Books
+          </Link>
+        </div>
+      </section>
+
+      <section className="bg-base-100 py-14">
+        <div className="mx-auto max-w-7xl px-4">
+          <h2 className="mb-8 text-center text-3xl font-bold">How Borrowing Works</h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {steps.map((s) => (
+              <div key={s.n} className="card border border-base-300 bg-base-200 p-6 text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-content">
+                  {s.n}
+                </div>
+                <h3 className="text-lg font-semibold">{s.t}</h3>
+                <p className="mt-1 text-sm opacity-80">{s.d}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <label className="w-full text-sm">
-          Change photo
-          <input type="file" accept="image/*" onChange={onFile} className="file-input file-input-bordered mt-1 w-full" />
-        </label>
-        <label className="w-full text-sm">
-          Name
-          <input value={name} onChange={(e) => setName(e.target.value)} required className="input input-bordered mt-1 w-full" />
-        </label>
-        <label className="w-full text-sm">
-          Email
-          <input value={u.email} readOnly className="input input-bordered mt-1 w-full opacity-70" />
-        </label>
-        <button className="btn btn-primary w-full" disabled={busy}>
-          {busy ? "Saving..." : "Save Changes"}
-        </button>
-      </form>
-    </div>
-  );
-}
+      </section>
 
-export default function Page() {
-  return (
-    <PrivateRoute>
-      <Profile />
-    </PrivateRoute>
+      <section className="mx-auto max-w-7xl px-4 py-14">
+        <h2 className="mb-8 text-center text-3xl font-bold">Top Categories</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+          {categories.map((c) => (
+            <Link key={c.n} href="/books" className="card items-center border border-base-300 bg-base-100 p-6 text-center transition hover:-translate-y-1 hover:shadow-lg">
+              <span className="text-4xl">{c.i}</span>
+              <span className="mt-2 font-semibold">{c.n}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

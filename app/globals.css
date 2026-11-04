@@ -71,3 +71,15 @@
   --depth: 0;
   --noise: 0;
 }
+@theme inline {
+  --font-serif: var(--font-fraunces), Georgia, serif;
+}
+
+.swiper-pagination-bullet {
+  background: #fff;
+  opacity: 0.5;
+}
+.swiper-pagination-bullet-active {
+  background: #e07b4c;
+  opacity: 1;
+}
